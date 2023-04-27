@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fetch Earthquake Data</title>
+  <style>
+    /* Add some basic styling for the table */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f8f8f8;
+    }
+  </style>
+</head>
+<body>
+  <h1>Earthquake Data</h1>
+  <!-- Create a table to display the fetched data -->
+  <table id="earthquake-data">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Magnitude</th>
+        <th>Location</th>
+        <th>More Info</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script>
+    const fetchEarthquakeData = async () => {
+      // Define the URL to fetch significant earthquake data from the last 30 days
+      const url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson";
+
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const earthquakes = data.features;
+
+        // Find the table element by its ID
+        const table = document.getElementById("earthquake-data").querySelector("tbody");
+
+        // Iterate through the earthquake data and populate the table with the relevant information
+        for (const earthquake of earthquakes) {
+          const row = document.createElement("tr");
+
+          const timeCell = document.createElement("td");
+          const time = new Date(earthquake.properties.time);
+          timeCell.textContent = time.toLocaleString();
+          row.appendChild(timeCell);
+
+          const magnitudeCell = document.createElement("td");
+          magnitudeCell.textContent = earthquake.properties.mag;
+          row.appendChild(magnitudeCell);
+
+          const locationCell = document.createElement("td");
+          locationCell.textContent = earthquake.properties.place;
+          row.appendChild(locationCell);
+
+          const infoCell = document.createElement("td");
+          const infoLink = document.createElement("a");
+          infoLink.href = earthquake.properties.url;
+          infoLink.textContent = "More Info";
+          infoLink.target = "_blank";
+          infoCell.appendChild(infoLink);
+          row.appendChild(infoCell);
+
+          table.appendChild(row);
+        }
+
+      } catch (error) {
+        console.error("Error fetching earthquake data:", error);
+      }
+    };
+
+    fetchEarthquakeData();
+  </script>
+</body>
+</html>
