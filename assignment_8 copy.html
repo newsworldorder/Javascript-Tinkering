@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>USGS Significant Earthquake Data</title>
+  </head>
+  <body>
+    <ul id="earthquake-list"></ul>
+    <script>
+      const url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson";
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          // Get the earthquake list element by its ID
+          const earthquakeList = document.getElementById("earthquake-list");
+
+          // Loop through the earthquake data
+          data.features.forEach((earthquake) => {
+            // Create an li element for each earthquake
+            const listItem = document.createElement("li");
+            // Set the text content of the li element to include the earthquake title and time
+            listItem.textContent = `${earthquake.properties.title} - ${new Date(earthquake.properties.time).toLocaleString()}`;
+            // Append the li element to the earthquake list ul element
+            earthquakeList.appendChild(listItem);
+          });
+        });
+    </script>
+  </body>
+</html>
